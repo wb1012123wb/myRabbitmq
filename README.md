@@ -4,5 +4,7 @@
     channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
     durable: 持久化参数
     
+    channel.basicPublish("", QUEUE_NAME, null, msg.getBytes());
+    第一个参数：""表示匿名转发
     
     

@@ -1,16 +1,17 @@
 /**
  * Copyright (C), 2018-2018, XXX有限公司
- * FileName: Receive
+ * FileName: Receive1
  * Author:   18636
- * Date:     2018/10/24 19:42
- * Description: 工作队列，消费者
+ * Date:     2018/10/25 16:36
+ * Description: 路由模型——消费者
  * History:
  * <author>          <time>          <version>          <desc>
  * 作者姓名           修改时间           版本号              描述
  */
-package com.weiboo.rabbit.workfair;
+package com.weiboo.rabbit.routing;
 
 import com.rabbitmq.client.*;
+import com.sun.deploy.util.StringUtils;
 import com.weiboo.rabbit.util.ConnectionUtils;
 
 import java.io.IOException;
@@ -18,16 +19,15 @@ import java.util.concurrent.TimeoutException;
 
 public class Receive1 {
 
-    private static final String QUEUE_NAME = "test_work_queue";
+    private static final String EXCHANGE_NAME = "test_exchange_direct";
+    private static final String QUEUE_NAME = "test_queue_direct_1";
 
     public static void main(String[] args) throws IOException, TimeoutException {
-        // 获取连接
         Connection connection = ConnectionUtils.getConnection();
-        // 获取channel
         final Channel channel = connection.createChannel();
-        // 声明队列
+
         channel.queueDeclare(QUEUE_NAME, false, false, false, null);
-        // 保证一次只分发一个
+        channel.queueBind(QUEUE_NAME, EXCHANGE_NAME, "error");
         channel.basicQos(1);
 
         // 定义一个消费者
@@ -50,8 +50,10 @@ public class Receive1 {
             }
         };
         // 自动应答改为false
-//        boolean autoAck = true;
         boolean autoAck = false;
         channel.basicConsume(QUEUE_NAME, autoAck, consumer);
+
+
+
     }
 }
